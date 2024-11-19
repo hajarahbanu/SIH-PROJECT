@@ -1,47 +1,159 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable react/prop-types */
+/* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
-import React from 'react'
+import React, { useState } from 'react';
+import { Folder, MoreVertical } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Folders = () => {
-  const folders = [
-    { id: 1, name: 'Documents', files: 23, lastModified: '2024-03-15' },
-    { id: 2, name: 'Images', files: 145, lastModified: '2024-03-14' },
-    { id: 3, name: 'Projects', files: 67, lastModified: '2024-03-13' },
-  ]
+  const navigate = useNavigate();
+  const [sortBy, setSortBy] = useState('name');
+  const [sortOrder, setSortOrder] = useState('asc');
 
-  return (
-    <div className="bg-white p-6 rounded-lg shadow-sm">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-800">Folders</h1>
-        <button className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
-          New Folder
-        </button>
+  const targetFolders = [
+    { 
+      id: 1, 
+      name: 'windows_10_cmake_Release_Graphviz-12.1.0-win32.zip', 
+      status: 'Scanned',
+      threat: 'tlec3b23e3f54',
+      dateUploaded: '01/09/2024 1:52 PM',
+      size: '15.2 MB'
+    }
+  ];
+
+  const cleanFolders = [
+    { 
+      id: 1, 
+      name: 'clean_file_example.zip', 
+      status: 'Clean',
+      dateUploaded: '01/09/2024 2:30 PM',
+      size: '10.1 MB'
+    }
+  ];
+
+  const sortFolders = (folders) => {
+    return [...folders].sort((a, b) => {
+      const compareValue = sortOrder === 'asc' ? 1 : -1;
+      if (a[sortBy] < b[sortBy]) return -1 * compareValue;
+      if (a[sortBy] > b[sortBy]) return 1 * compareValue;
+      return 0;
+    });
+  };
+
+  const handleSort = (column) => {
+    if (sortBy === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(column);
+      setSortOrder('asc');
+    }
+  };
+
+  const FolderTable = ({ folders, title, description, showNewFolder = false }) => (
+    <div className="mb-8">
+      <div className="flex flex-row items-center justify-between space-y-0 pb-4">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-semibold tracking-tight">{title}</h2>
+          <p className="text-sm text-muted-foreground">{description}</p>
+        </div>
+        {showNewFolder && (
+          <button 
+            onClick={() => navigate('/')}
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 py-2 bg-purple-600 text-white hover:bg-purple-700"
+          >
+            New Folder
+          </button>
+        )}
       </div>
-      
-      <div className="grid gap-4">
-        {folders.map(folder => (
-          <div key={folder.id} className="p-4 border rounded-lg hover:bg-gray-50">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <svg className="w-6 h-6 text-purple-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                </svg>
-                <div>
-                  <h3 className="text-lg font-medium text-gray-800">{folder.name}</h3>
-                  <p className="text-sm text-gray-500">{folder.files} files · Last modified {folder.lastModified}</p>
-                </div>
-              </div>
-              <button className="text-gray-400 hover:text-gray-600">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        ))}
+      <div className="rounded-md border">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b bg-muted/50">
+              <th className="h-10 px-4 text-left align-middle font-medium">
+                <button
+                  className="flex items-center space-x-1"
+                  onClick={() => handleSort('name')}
+                >
+                  <span>Item</span>
+                  {sortBy === 'name' && (
+                    <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                  )}
+                </button>
+              </th>
+              <th className="h-10 px-4 text-left align-middle font-medium">
+                <button
+                  className="flex items-center space-x-1"
+                  onClick={() => handleSort('dateUploaded')}
+                >
+                  <span>Date Uploaded</span>
+                  {sortBy === 'dateUploaded' && (
+                    <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                  )}
+                </button>
+              </th>
+              <th className="h-10 px-4 text-left align-middle font-medium">
+                <button
+                  className="flex items-center space-x-1"
+                  onClick={() => handleSort('status')}
+                >
+                  <span>Status</span>
+                  {sortBy === 'status' && (
+                    <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                  )}
+                </button>
+              </th>
+              <th className="h-10 px-4 text-left align-middle font-medium">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortFolders(folders).map((folder) => (
+              <tr key={folder.id} className="border-b">
+                <td className="p-4">
+                  <div className="flex items-center space-x-2">
+                    <Folder className="h-4 w-4 text-purple-600" />
+                    <span>{folder.name}</span>
+                  </div>
+                </td>
+                <td className="p-4">{folder.dateUploaded}</td>
+                <td className="p-4">
+                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    folder.status === 'Clean' 
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {folder.status}
+                  </span>
+                </td>
+                <td className="p-4">
+                  <button className="inline-flex items-center justify-center rounded-md w-8 h-8 hover:bg-muted">
+                    <MoreVertical className="h-4 w-4" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
-  )
-}
+  );
 
-export default Folders
+  return (
+    <div className="w-full">
+      <FolderTable 
+        folders={targetFolders}
+        title="Target Folder"
+        description="Manage and monitor your target folders"
+        showNewFolder={true}
+      />
+      <FolderTable 
+        folders={cleanFolders}
+        title="Clean Folder"
+        description="View and manage your clean folders"
+        showNewFolder={false}
+      />
+    </div>
+  );
+};
+
+export default Folders;

@@ -19,7 +19,7 @@ const Home = () => {
     console.log('File submitted:', selectedFile)
   }
 
-  const tabs = ['FILE', 'URL', 'FOLDER']
+  const tabs = ['FILE', 'FOLDER']
 
   return (
     <div className="max-w-5xl mx-auto">
